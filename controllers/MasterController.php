@@ -11,9 +11,9 @@ class MasterController extends ControllerBase {
      * API get master data pendidikan
      */
     public function pendidikan() {
-        $pendidikan = new Pendidikan;
+        $model = new Pendidikan;
         // get list muzaki
-        $lists = $pendidikan->getActive();
+        $lists = $model->getActive();
         if( !$lists ) $this->respNOK('hasil tidak ditemukan');
 
         $this->respOK($lists);
@@ -23,9 +23,9 @@ class MasterController extends ControllerBase {
      * API get master data pekerjaan
      */
     public function pekerjaan() {
-        $pekerjaan = new Pekerjaan;
+        $model = new Pekerjaan;
         // get list muzaki
-        $lists = $pekerjaan->getActive();
+        $lists = $model->getActive();
         if( !$lists ) $this->respNOK('hasil tidak ditemukan');
 
         $this->respOK($lists);
@@ -35,9 +35,24 @@ class MasterController extends ControllerBase {
      * API get master data mata uang
      */
     public function currency() {
-        $currency = new Currency;
+        $model = new Currency;
         // get list muzaki
-        $lists = $currency->getActive();
+        $lists = $model->getActive();
+        if( !$lists ) $this->respNOK('hasil tidak ditemukan');
+
+        $this->respOK($lists);
+    }
+
+    /**
+     * API get master data rekening
+     */
+    public function rekening() {
+        // input
+        $cabang = $this->getPost('cabang');
+
+        $model = new Rekening;
+        // get list muzaki
+        $lists = $model->getActive($cabang);
         if( !$lists ) $this->respNOK('hasil tidak ditemukan');
 
         $this->respOK($lists);

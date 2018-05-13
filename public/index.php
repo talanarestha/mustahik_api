@@ -218,6 +218,15 @@ try {
 
 
     /**
+     * api get 
+     */
+    $app->post('/master/rekening', function(){
+        $ctrl = new MasterController;
+        $ctrl->rekening();
+    });
+
+
+    /**
      * Not found handler
      */
     $app->notFound(function () use ($app) {
