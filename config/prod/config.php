@@ -6,10 +6,10 @@ return new Config(
     [
         'database'    => [
             'adapter'  => 'Mysql',
-            'host'     => '10.10.1.51',
-            'username' => 'morpheus',
-            'password' => 'luc1ddr34m',
-            'name'     => 'layananzakat'
+            'host'     => '122.248.32.114',
+            'username' => 'apu_dev',
+            'password' => '6GODut5ghw!!$',
+            'name'     => 'apu_dbapu_dev'
         ],
         'application' => [
             'controllersDir'    => __DIR__ . '/../../controllers/',
