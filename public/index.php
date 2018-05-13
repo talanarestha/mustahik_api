@@ -11,7 +11,7 @@ use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\Cache\Backend\Redis;
 use Phalcon\Cache\Frontend\Data as FrontData;
 
-define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'development');
+define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'production');
 
 /**
  * Read the configuration
