@@ -29,6 +29,7 @@ class DonasiController extends ControllerBase {
     public function submit() {
         // input
         $donasi['muzakiCode'] = $this->getPost('muzaki_code');
+        $donasi['muzakiName'] = $this->getPost('muzaki_name');
         $donasi['tanggal']    = $this->getPost('date');
         $donasi['keterangan'] = $this->getPost('keterangan');
         $donasi['penyetor']   = $this->getPost('penyetor');
@@ -67,6 +68,16 @@ class DonasiController extends ControllerBase {
         // submit penerimaan
         $result = $model->saveData($donasi);
         if( !$result ) $this->respNOK('server error, mohon coba kembali');
+
+        // inbox notification
+        $inbox = new Inbox;
+        $message = array(
+            'from'      => 'system',
+            'to'        => $muzaki['operator'],
+            'subject'   => 'Donasi '. $donasi['muzakiCode']
+        );
+        $message['body'] = 'Donasi '.$donasi['muzakiName'].' ('.$donasi['muzakiCode'].') berhasil';
+        $inbox->compose($message);
 
         $this->respOK();
     }
