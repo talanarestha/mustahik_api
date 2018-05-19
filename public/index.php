@@ -11,7 +11,7 @@ use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\Cache\Backend\Redis;
 use Phalcon\Cache\Frontend\Data as FrontData;
 
-define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'production');
+define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'development');
 
 /**
  * Read the configuration
@@ -218,11 +218,20 @@ try {
 
 
     /**
-     * api get 
+     * api get nomor rekening 
      */
     $app->post('/master/rekening', function(){
         $ctrl = new MasterController;
         $ctrl->rekening();
+    });
+
+    
+    /**
+     * api post donasi
+     */
+    $app->post('/donasi/submit', function(){
+        $ctrl = new DonasiController;
+        $ctrl->submit();
     });
 
 

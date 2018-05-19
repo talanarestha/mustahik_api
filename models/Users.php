@@ -13,7 +13,7 @@ class Users extends \Phalcon\Mvc\Model {
             FROM {$this->tablename} a 
             LEFT JOIN t_penempatan b ON a.username=b.username 
             LEFT JOIN t_upz c ON b.id_upz=c.id_upz
-            LEFT JOIN t_event d ON b.id_event=d.id_event
+            LEFT JOIN t_event d ON b.id_event=d.id_event AND DATE(now()) BETWEEN DATE(tanggal_mulai) AND DATE(tanggal_selesai)
             LEFT JOIN t_cabang e ON a.IDCabang=e.IDCabang
             LEFT JOIN t_jabatan f ON a.IDJabatan=f.IDJabatan
             WHERE a.username=?";
@@ -25,18 +25,30 @@ class Users extends \Phalcon\Mvc\Model {
         $event = array();
         $profile = array();
         foreach($result as $row){
-            $event[] = array(
-                'id_event'          => $row['id_event'],
-                'nama_event'        => $row['nama_event'],
-                'tanggal_mulai'     => $row['tanggal_mulai'],
-                'tanggal_selesai'   => $row['tanggal_selesai']
-            );
+            if( $row['id_event']!='' ){
+                $event[] = array(
+                    'IDCabang'          => $row['IDCabang'],
+                    'NamaCabang'        => $row['NamaCabang'],
+                    'id_upz'            => $row['id_upz'],
+                    'nama_upz'          => $row['nama_upz'],
+                    'no_urut'           => $row['no_urut'],
+                    'id_event'          => $row['id_event'],
+                    'nama_event'        => $row['nama_event'],
+                    'tanggal_mulai'     => $row['tanggal_mulai'],
+                    'tanggal_selesai'   => $row['tanggal_selesai']
+                );
+            }
         }
         $profile = $result[0];
         unset($profile['id_event']);
         unset($profile['nama_event']);
         unset($profile['tanggal_mulai']);
         unset($profile['tanggal_selesai']);
+        unset($profile['IDCabang']);
+        unset($profile['NamaCabang']);
+        unset($profile['id_upz']);
+        unset($profile['nama_upz']);
+        unset($profile['no_urut']);
         $profile['event'] = $event;
         return $profile;
     }
