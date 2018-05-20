@@ -73,12 +73,12 @@ class DonasiController extends ControllerBase {
         $inbox = new Inbox;
         $message = array(
             'from'      => 'system',
-            'to'        => $muzaki['operator'],
+            'to'        => $donasi['username'],
             'subject'   => 'Donasi '. $donasi['muzakiCode']
         );
         $message['body'] = 'Donasi '.$donasi['muzakiName'].' ('.$donasi['muzakiCode'].') berhasil';
         $inbox->compose($message);
 
-        $this->respOK();
+        $this->respOK($result);
     }
 }

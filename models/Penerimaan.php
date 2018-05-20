@@ -37,6 +37,11 @@ class Penerimaan extends \Phalcon\Mvc\Model {
         $code = $this->generateKode($donasi['tanggal'], $donasi['cabang'], $donasi['upz'], $donasi['ws']);
         // @todo: calculate total
         $donasi['total'] = 0; 
+        foreach( $donasi['donasi'] as $row ){
+            if( $row['bentuk']=='UANG' ){
+                $donasi['total'] += $row['jumlah']; 
+            }
+        }
 
         $query = sprintf("INSERT INTO %s ( 
                 IDTerima,
@@ -99,7 +104,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             $this->saveDetail($code, $donasi['username'], $row);
         }
 
-        return true;
+        return $code;
     }
 
     public function saveDetail($donasiId, $username, $donasi){
@@ -154,7 +159,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             '0',
             ( $donasi['rekening']=='TUNAI' ) ? $donasi['jumlah'] : '0',
             ( $donasi['rekening']!='TUNAI' ) ? $donasi['jumlah'] : '0',
-            'N', 
+            ( isset($donasi['edc']) && $donasi['edc']==1 ) ? 'Y' : 'N',
             ( $donasi['rekening']!='TUNAI' ) ? $donasi['rekening'] : '',
             ( $donasi['bentuk']=='BARANG' ) ? $donasi['nama_barang'] : '',
             ( $donasi['bentuk']=='BARANG' ) ? $donasi['jumlah'] : '0',
