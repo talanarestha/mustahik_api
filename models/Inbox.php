@@ -19,20 +19,20 @@ class Inbox extends \Phalcon\Mvc\Model {
                 created
             ) VALUES 
             ( 
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
                 0,
                 now()
             )",
             $this->tablename,
-            $message['from'],
-            $message['to'],
-            $message['subject'],
-            $message['body'],
-            isset($message['data']) ? $message['data'] : '' 
+            $this->db->escapeString($message['from']),
+            $this->db->escapeString($message['to']),
+            $this->db->escapeString($message['subject']),
+            $this->db->escapeString($message['body']),
+            isset($message['data']) ? $this->db->escapeString($message['data']) : $this->db->escapeString('') 
         );
 
         $this->db->execute($query);

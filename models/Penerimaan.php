@@ -66,15 +66,15 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 '%s',
                 '%d',
                 '%d',
-                '%s',
-                '%s',
-                '%s',
+                %s,
+                %s,
+                %s,
                 '%d',
                 '%d',
                 '%s',
                 '%s',
                 '%s',
-                '%s',
+                %s,
                 now()
             )",
             $this->tablename,
@@ -83,15 +83,15 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             date("Y-m-d H:i:s", strtotime($donasi['tanggal'])),
             $donasi['total'],
             0,
-            $donasi['keterangan'],
-            $donasi['penyetor'],
-            $donasi['cabang'],
+            $this->db->escapeString($donasi['keterangan']),
+            $this->db->escapeString($donasi['penyetor']),
+            $this->db->escapeString($donasi['cabang']),
             $donasi['upz'],
             $donasi['event'],
             $donasi['ws'],
             '',
             $donasi['hambaallah'],
-            $donasi['username']
+            $this->db->escapeString($donasi['username'])
         );
 
         $this->db->execute($query);        
@@ -136,17 +136,17 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 '%s',
                 '%s',
                 '%s',
+                %s,
                 '%s',
                 '%s',
                 '%s',
                 '%s',
                 '%s',
                 '%s',
+                %s,
                 '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
+                %s,
+                %s,
                 now()
             )",
             $this->tableDetail,
@@ -154,17 +154,17 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             $donasi['category_id'],
             $jenis,
             '',
-            ( empty($donasi['sub_category']) ) ? '0' : $donasi['sub_category'],
+            ( empty($donasi['sub_category']) ) ? '0' : $this->db->escapeString($donasi['sub_category']),
             $donasi['currency'],
             '0',
             ( $donasi['rekening']=='TUNAI' ) ? $donasi['jumlah'] : '0',
             ( $donasi['rekening']!='TUNAI' ) ? $donasi['jumlah'] : '0',
             ( isset($donasi['edc']) && $donasi['edc']==1 ) ? 'Y' : 'N',
             ( $donasi['rekening']!='TUNAI' ) ? $donasi['rekening'] : '',
-            ( $donasi['bentuk']=='BARANG' ) ? $donasi['nama_barang'] : '',
+            ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['nama_barang']) : $this->db->escapeString(''),
             ( $donasi['bentuk']=='BARANG' ) ? $donasi['jumlah'] : '0',
-            ( $donasi['bentuk']=='BARANG' ) ? $donasi['satuan_barang'] : '0',
-            $username
+            ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['satuan_barang']) : '0',
+            $this->db->escapeString($username)
         );
 
         $this->db->execute($query);        
