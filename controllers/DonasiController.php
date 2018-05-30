@@ -54,16 +54,6 @@ class DonasiController extends ControllerBase {
 
         $donasi['donasi'] = $donasiArr;
 
-        // get info agent by username
-        // $users = new Users;
-        // $agent = $users->byUsername($donasi['username']);
-
-        // if( !$agent ) $this->respNOK('agent not found');
-
-        // $donasi['cabang'] = $agent['IDCabang'];
-        // $donasi['upz']    = $agent['id_upz'];
-        // $donasi['ws']     = $agent['no_urut'];
-
         $model = new Penerimaan;
         // submit penerimaan
         $result = $model->saveData($donasi);
@@ -78,6 +68,25 @@ class DonasiController extends ControllerBase {
         );
         $message['body'] = 'Donasi '.$donasi['muzakiName'].' ('.$donasi['muzakiCode'].') berhasil';
         $inbox->compose($message);
+
+        $this->respOK($result);
+    }
+
+    public function penerimaan(){
+        // input
+        $username   = $this->getPost('username');
+        $page       = $this->getPost('page', 1);
+        $limit      = $this->getPost('limit', 10);
+        $filter     = $this->getPost('filter');
+
+        // validate mandatory input
+        $valid = $this->validMandatory([$username]);
+        if( !$valid ) $this->respNOK('missing mandatory');
+
+        $model = new Penerimaan;
+        // get result
+        $result = $model->getAll($username, $page, $limit, $filter);
+        if( !$result ) $this->respNOK('result not found');
 
         $this->respOK($result);
     }

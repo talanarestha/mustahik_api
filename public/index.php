@@ -11,7 +11,7 @@ use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\Cache\Backend\Redis;
 use Phalcon\Cache\Frontend\Data as FrontData;
 
-define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'development');
+define('ENVIRONMENT', isset($_SERVER['PLATFORM_ENV']) ? $_SERVER['PLATFORM_ENV'] : 'production');
 
 /**
  * Read the configuration
@@ -232,6 +232,15 @@ try {
     $app->post('/donasi/submit', function(){
         $ctrl = new DonasiController;
         $ctrl->submit();
+    });
+
+
+    /**
+     * api get donasi penerimaan
+     */
+    $app->post('/donasi/penerimaan', function(){
+        $ctrl = new DonasiController;
+        $ctrl->penerimaan();
     });
 
 

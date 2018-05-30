@@ -9,6 +9,85 @@ class Penerimaan extends \Phalcon\Mvc\Model {
     	$this->db = $this->getDi()->getShared('db');
 	}
 
+    public function getAll($username, $page, $limit=10, $filter=null){
+        $sqlFilter = '';
+        if( $filter!=null ){
+            $sqlFilter = ' AND a.kode_muzaki like "%'.$filter.'%" OR a.tanggal_terima like "'.$filter.'%" OR a.penyetor like "%'.$filter.'%"';
+        }
+
+        $offset     = ($page-1) * $limit; 
+        $sqlLimit   = " LIMIT $offset,$limit";
+
+        $query = "SELECT 
+                a.IDTerima, 
+                a.kode_muzaki, 
+                a.tanggal_terima, 
+                a.total, 
+                a.cashback, 
+                a.keterangan,
+                a.penyetor, 
+                a.IDCabang,
+                a.id_upz, 
+                a.id_event, 
+                a.ws, 
+                a.email, 
+                a.hamba_allah, 
+                a.created_by,
+                b.*,
+                c.nama as nama_muzaki,
+                (SELECT jenis_penerimaan FROM t_jenis_penerimaan WHERE IDJenis=b.IDJenis) as category,
+                IF(b.IDProgram<>0,(SELECT jenis_penerimaan FROM t_jenis_penerimaan WHERE IDJenis=b.IDProgram),'') as subcategory
+            FROM {$this->tablename} a 
+            LEFT JOIN {$this->tableDetail} b ON a.IDTerima=b.IDTerima 
+            LEFT JOIN t_muzaki c ON a.kode_muzaki=c.kode_muzaki
+            WHERE a.created_by='$username' $sqlFilter ORDER BY a.created_on DESC $sqlLimit";
+        $result = $this->db->fetchAll($query, \Phalcon\Db::FETCH_ASSOC);
+        
+        if ( !$result )
+            return false;
+        
+        $data = array();
+        $root = array('kode_muzaki', 'tanggal_terima', 'total', 'cashback', 'keterangan', 'penyetor', 'IDCabang',
+            'id_upz', 'id_event', 'ws', 'email', 'hamba_allah', 'created_by', 'nama_muzaki'
+        );
+
+        foreach( $result as $row ){
+
+            if( !isset($data[$row['IDTerima']]) ) {
+                $data[$row['IDTerima']] = array(
+                    'IDTerima'          => $row['IDTerima'],
+                    'kode_muzaki'       => $row['kode_muzaki'],
+                    'nama_muzaki'       => $row['nama_muzaki'],
+                    'tanggal_terima'    => $row['tanggal_terima'],
+                    'total'             => $row['total'],
+                    'cashback'          => $row['cashback'],
+                    'keterangan'        => $row['keterangan'],
+                    'penyetor'          => $row['penyetor'],
+                    'IDCabang'          => $row['IDCabang'],
+                    'id_upz'            => $row['id_upz'],
+                    'id_event'          => $row['id_event'],
+                    'ws'                => $row['ws'],
+                    'email'             => $row['email'],
+                    'hamba_allah'       => $row['hamba_allah'],
+                    'created_by'        => $row['created_by']
+                );
+            }
+
+            //unset
+            foreach($root as $field){
+                unset( $row[$field] );
+            }
+
+            $data[$row['IDTerima']]['donasi'][] = $row;
+        }
+
+        $final = array();
+        foreach($data as $row){
+            $final[] = $row;
+        }
+
+        return $final;
+    }
 
     /**
      * Generate kode penerimaan
