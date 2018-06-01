@@ -35,6 +35,9 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 a.created_by,
                 b.*,
                 c.nama as nama_muzaki,
+                c.nik as nik,
+                c.alamat as alamat,
+                c.npwp as npwp,
                 (SELECT jenis_penerimaan FROM t_jenis_penerimaan WHERE IDJenis=b.IDJenis) as category,
                 IF(b.IDProgram<>0,(SELECT jenis_penerimaan FROM t_jenis_penerimaan WHERE IDJenis=b.IDProgram),'') as subcategory
             FROM {$this->tablename} a 
@@ -48,7 +51,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
         
         $data = array();
         $root = array('kode_muzaki', 'tanggal_terima', 'total', 'cashback', 'keterangan', 'penyetor', 'IDCabang',
-            'id_upz', 'id_event', 'ws', 'email', 'hamba_allah', 'created_by', 'nama_muzaki'
+            'id_upz', 'id_event', 'ws', 'email', 'hamba_allah', 'created_by', 'nama_muzaki', 'alamat', 'nik', 'npwp'
         );
 
         foreach( $result as $row ){
@@ -58,6 +61,9 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                     'IDTerima'          => $row['IDTerima'],
                     'kode_muzaki'       => $row['kode_muzaki'],
                     'nama_muzaki'       => $row['nama_muzaki'],
+                    'alamat'            => $row['alamat'],
+                    'nik'               => $row['nik'],
+                    'npwp'              => $row['npwp'],
                     'tanggal_terima'    => $row['tanggal_terima'],
                     'total'             => $row['total'],
                     'cashback'          => $row['cashback'],

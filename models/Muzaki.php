@@ -73,7 +73,9 @@ class Muzaki extends \Phalcon\Mvc\Model {
                 id_upz,
                 ws,
                 created_on,
-                created_by
+                created_by,
+                sync,
+                nik
             ) VALUES 
             ( 
                 '%s',
@@ -102,6 +104,8 @@ class Muzaki extends \Phalcon\Mvc\Model {
                 '%s',
                 '%s',
                 now(),
+                '%s',
+                'NEW',
                 '%s'
             )",
             $this->tablename,
@@ -128,7 +132,8 @@ class Muzaki extends \Phalcon\Mvc\Model {
             $muzaki['cabang'],
             $muzaki['upz'],
             $muzaki['ws'],
-            $muzaki['operator']
+            $muzaki['operator'],
+            $muzaki['nik']
         );
 
         try {

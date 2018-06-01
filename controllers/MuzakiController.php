@@ -45,6 +45,7 @@ class MuzakiController extends ControllerBase {
         $muzaki['email']          = $this->getPost('email');
         $muzaki['namaBank']       = $this->getPost('nama_bank');
         $muzaki['rekening']       = $this->getPost('rekening');
+        $muzaki['nik']            = $this->getPost('nik');
         $muzaki['npwp']           = $this->getPost('npwp');
         $muzaki['operator']       = $this->getPost('opt');
         $muzaki['cabang']         = $this->getPost('cabang');
