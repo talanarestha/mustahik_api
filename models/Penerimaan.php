@@ -143,7 +143,8 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 email,
                 hamba_allah,
                 created_by,
-                created_on
+                created_on,
+                sync
             ) VALUES 
             ( 
                 '%s',
@@ -160,7 +161,8 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 '%s',
                 '%s',
                 %s,
-                now()
+                now(),
+                'NEW'
             )",
             $this->tablename,
             $code,
