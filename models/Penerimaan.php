@@ -231,7 +231,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 '%s',
                 '%s',
                 %s,
-                '%s',
+                %s,
                 %s,
                 %s,
                 now()
@@ -249,8 +249,8 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             ( isset($donasi['edc']) && $donasi['edc']==1 ) ? 'Y' : 'N',
             ( $donasi['rekening']!='TUNAI' ) ? $donasi['rekening'] : '',
             ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['nama_barang']) : $this->db->escapeString(''),
-            ( $donasi['bentuk']=='BARANG' ) ? $donasi['jumlah'] : '',
-            ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['satuan_barang']) : '',
+            ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['jumlah']) : 'null',
+            ( $donasi['bentuk']=='BARANG' ) ? $this->db->escapeString($donasi['satuan_barang']) : $this->db->escapeString(''),
             $this->db->escapeString($username)
         );
 
