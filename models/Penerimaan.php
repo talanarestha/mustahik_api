@@ -129,6 +129,9 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             }
         }
 
+        $donasi['upz'] = str_pad( $donasi['upz'] , 2, "0", STR_PAD_LEFT);
+        $donasi['ws'] = str_pad( $donasi['ws'] , 2, "0", STR_PAD_LEFT);
+
         $query = sprintf("INSERT INTO %s ( 
                 IDTerima,
                 kode_muzaki,
@@ -156,8 +159,8 @@ class Penerimaan extends \Phalcon\Mvc\Model {
                 %s,
                 %s,
                 %s,
-                '%d',
-                '%d',
+                '%s',
+                '%s',
                 '%s',
                 '%s',
                 '%s',
