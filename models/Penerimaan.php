@@ -102,7 +102,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
      * ws     = no urut dari penempatan upz
      */
     private function generateKode($tgl, $cabang, $upz, $ws){
-        $tgl = date('Y-m-d', strtotime($tgl));
+        $tgl = date('Y-m-d', strtotime( str_replace(array('T','Z'),array(' ', ''),$tgl) ) );
         $t   = explode("-",$tgl);
         
 		$result = $this->db->fetchOne( "SELECT 
@@ -167,7 +167,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
             $this->tablename,
             $code,
             $donasi['muzakiCode'],
-            date("Y-m-d H:i:s", strtotime($donasi['tanggal'])),
+            date("Y-m-d H:i:s", strtotime( str_replace(array('T','Z'),array(' ', ''),$donasi['tanggal']) )),
             $donasi['total'],
             0,
             $this->db->escapeString($donasi['keterangan']),
