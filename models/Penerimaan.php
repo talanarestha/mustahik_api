@@ -115,7 +115,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
         );
 		$urut = 1;
         if( $result ) $urut = $result['urut'];
-		return $cabang.str_pad( $upz , 2, "0", STR_PAD_LEFT).'-'.$ws.'-'.substr($t[0],2,2).$t[1].$t[2] .'-'. $urut;
+		return $cabang.str_pad( $upz , 2, "0", STR_PAD_LEFT).'-'.str_pad( $ws , 2, "0", STR_PAD_LEFT).'-'.substr($t[0],2,2).$t[1].$t[2] .'-'. $urut;
 	}
 
     public function saveData($donasi){
