@@ -104,6 +104,7 @@ class Penerimaan extends \Phalcon\Mvc\Model {
     private function generateKode($tgl, $cabang, $upz, $ws){
         $tgl = date('Y-m-d', strtotime( str_replace(array('T','Z'),array(' ', ''),$tgl) ) );
         $t   = explode("-",$tgl);
+        $ws  = str_pad( $ws , 2, "0", STR_PAD_LEFT);
         
 		$result = $this->db->fetchOne( "SELECT 
                 LPAD( COUNT(*)+1, 3,'0') as urut
