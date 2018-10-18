@@ -7,19 +7,19 @@ return new Config(
         'database'    => [
             'adapter'  => 'Mysql',
             'host'     => 'localhost',
-            'username' => 'root',
-            'password' => 'root',
-            'name'     => 'layananzakat'
+            'username' => 'mustahik',
+            'password' => 'mustahikpwd',
+            'name'     => 'mustahik'
         ],
         'application' => [
             'controllersDir'    => __DIR__ . '/../../controllers/',
             'modelsDir'         => __DIR__ . '/../../models/',
-            'baseUri'           => '/core/',
+            'baseUri'           => 'http://api.mustahik.me/',
         ],
         'log' => [
             'core'  => [
-                'path'      => '/var/log/lzapi/',
-                'prefix'    => 'core_'
+                'path'      => '/app/werks/mustahik/logs/',
+                'prefix'    => 'api_'
             ]
         ],
         'queue' => [

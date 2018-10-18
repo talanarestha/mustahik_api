@@ -86,6 +86,18 @@ try {
         return new \Phalcon\Http\Request;
     });
 
+    // setup security service
+    $di->set('security', function(){
+        $security = new Phalcon\Security();
+        $security->setWorkFactor(12); //Set the password hashing factor to 12 rounds
+        return $security;
+    }, true);
+
+    $di->set('mustahik_helper', function(){
+        require_once __DIR__ .'/../library/MustahikHelper.php';
+        return new MustahikHelper;
+    }, true);
+
     // cache
     $di->set('cache', function() use ($config){
         // init cache
@@ -118,131 +130,40 @@ try {
      */
     $app = new Micro();
 
-    /**
-     * api login
-     */
-    $app->post('/login', function(){
+    $app->post('/auth/login', function(){
         $ctrl = new AccountController;
         $ctrl->login();
     });
 
-
-    /**
-     * api logout
-     */
-    $app->get('/logout', function(){
+    $app->post('/auth/password', function(){
         $ctrl = new AccountController;
-        $ctrl->logout();
+        $ctrl->password();
     });
 
-    
-    /**
-     * api get list muzaki
-     */
-    $app->post('/muzaki/get', function(){
-        $ctrl = new MuzakiController;
+    $app->post('/pengajuan', function(){
+        $ctrl = new PengajuanController;
+        $ctrl->index();
+    });
+
+    $app->post('/pengajuan/get', function(){
+        $ctrl = new PengajuanController;
         $ctrl->get();
     });
 
-
-    /**
-     * api register personal muzaki
-     */
-    $app->post('/muzaki/register/personal', function(){
-        $ctrl = new MuzakiController;
-        $ctrl->regPersonal();
-    });
-    
-
-    /**
-     * api get list inbox message
-     */
-    $app->post('/inbox/message', function(){
-        $ctrl = new InboxController;
-        $ctrl->message();
+    $app->post('/pengajuan/search', function(){
+        $ctrl = new PengajuanController;
+        $ctrl->search();
     });
 
-
-    /**
-     * api read inbox message
-     */
-    $app->post('/inbox/read', function(){
-        $ctrl = new InboxController;
-        $ctrl->read();
+    $app->post('/survey/get', function(){
+        $ctrl = new SurveyController;
+        $ctrl->get();
     });
 
-
-    /**
-     * api delete inbox
-     */
-    $app->post('/inbox/delete', function(){
-        $ctrl = new InboxController;
-        $ctrl->delete();
+    $app->post('/survey/save', function(){
+        $ctrl = new SurveyController;
+        $ctrl->save();
     });
-
-
-    /**
-     * api get master pendidikan
-     */
-    $app->get('/master/pendidikan', function(){
-        $ctrl = new MasterController;
-        $ctrl->pendidikan();
-    });
-
-
-    /**
-     * api get master pekerjaan
-     */
-    $app->get('/master/pekerjaan', function(){
-        $ctrl = new MasterController;
-        $ctrl->pekerjaan();
-    });
-
-
-    /**
-     * api get master currency
-     */
-    $app->get('/master/currency', function(){
-        $ctrl = new MasterController;
-        $ctrl->currency();
-    });
-
-
-    /**
-     * api get donation category
-     */
-    $app->post('/donasi/category', function(){
-        $ctrl = new DonasiController;
-        $ctrl->category();
-    });
-
-
-    /**
-     * api get nomor rekening 
-     */
-    $app->post('/master/rekening', function(){
-        $ctrl = new MasterController;
-        $ctrl->rekening();
-    });
-
-    
-    /**
-     * api post donasi
-     */
-    $app->post('/donasi/submit', function(){
-        $ctrl = new DonasiController;
-        $ctrl->submit();
-    });
-
-
-    /**
-     * api get donasi penerimaan
-     */
-    $app->post('/donasi/penerimaan', function(){
-        $ctrl = new DonasiController;
-        $ctrl->penerimaan();
-    });
-
 
     /**
      * Not found handler
