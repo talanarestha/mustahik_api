@@ -51,6 +51,7 @@ class SurveyController extends ControllerBase
                                 'id'        => $survey['id'],
                                 'no'        => $_no,
                                 'subject'   => $survey['subject'],
+                                'jawaban'   => $survey['jawab_id']?:0,
                                 'option'    => [
                                     [
                                         'id'            => $survey['pilihan_id'],
@@ -118,12 +119,75 @@ class SurveyController extends ControllerBase
     public function save() 
     {
         $id =  $this->request->getPost('pengajuan_id', ['string'], '0');
+        $jawaban =  $this->request->getPost('jawaban');
+        $surveyor =  $this->request->getPost('user_id');
         $model = new Pengajuan;
 
         if ($record = $model->getById($id))
         {
-            $record = $this->mustahik_helper->normalizePengajuan($record);
-            $this->respOK($record);
+            $mPengajuanSurvey = new PengajuanSurvey;
+            if ($record['status'] == 0 && $record['survey'] == 1)
+            {
+                $mSurveyResult = new PengajuanSurveyResult;       
+
+                $dataSurvey = new stdClass;
+                $dataSurvey->tanggal_survey = date('Y-m-d');
+                $dataSurvey->surveyor = $surveyor;
+
+                $act = new Activities;
+                $act->setUserId($surveyor);
+
+                $aSurveyAnswer = json_decode($jawaban); 
+                
+                if (empty($aSurveyAnswer))
+                    $this->respNOK(-1, "Data Survey tidak lengkap");
+
+                if ($info_survey = $mPengajuanSurvey->getByPengajuan($id))
+                {
+                    $dataSurvey->id = $info_survey['id'];
+                    if ($mPengajuanSurvey->updateRecord($dataSurvey))
+                    {
+                        $pengajuanSurveyId = $dataSurvey->id;
+                        foreach ($aSurveyAnswer as $qId  => $aId)
+                        {
+                            $mSurveyResult->updateRecordBy(
+                                (object)[
+                                    'option_id'             => $aId
+                                ],[
+                                    "pengajuan_survey_id='$pengajuanSurveyId'",
+                                    "survey_id='$qId'"]
+                            );
+                        }
+                        $act->log('update verifikasi survey pengajuan','success', '');
+                        return $this->respOK();
+                    }
+
+                }
+                else 
+                {
+                    $dataSurvey->created = date('Y-m-d H:i:s');
+                    $dataSurvey->pengajuan_id = $id;
+
+                    if ($mPengajuanSurvey->addRecord($dataSurvey))
+                    {
+                        $pengajuanSurveyId = $mPengajuanSurvey->getInsertId();
+
+                        foreach ($aSurveyAnswer as $qId  => $aId)
+                        {
+                            $mSurveyResult->addRecord((object)[
+                                'pengajuan_survey_id'   => $pengajuanSurveyId,
+                                'survey_id'             => $qId,
+                                'option_id'             => $aId
+                            ]);
+                        }
+                        $act->log('set verifikasi survey pengajuan','success', '');
+                        return $this->respOK();
+                    }
+                }
+
+                $this->respNOK(-1, "Internal Error. Hubungi Administrator untuk informasi lebih lanjut");
+            }
+            $this->respNOK(-1, "Data Pengajuan sudah ditutup atau Data Survey tidak diperlukan");
         }
 
         $this->respNOK(-1, "Data tidak ditemukan");
