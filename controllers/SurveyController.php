@@ -15,7 +15,7 @@ class SurveyController extends ControllerBase
                 $mPengajuanSurvey = new PengajuanSurvey;
 
                 $info_survey = $mPengajuanSurvey->getByPengajuan($id);
-        
+
                 $modelSurvey = new Survey;
                 $list_survey = [];
                 $list_kategori = [];
@@ -43,7 +43,7 @@ class SurveyController extends ControllerBase
                             if ($_survey)
                             {
                                 $list_survey[$_index][] = $_survey;
-                            }                                
+                            }
 
 
                             $idx = 0;
@@ -71,7 +71,7 @@ class SurveyController extends ControllerBase
                             $_no++;
                             $_indexS++;
                         }
-                        else 
+                        else
                         {
                             $idx++;
                             $_survey['option'][] = [
@@ -84,7 +84,7 @@ class SurveyController extends ControllerBase
 
                             if ($survey['jawab_id'] == $survey['pilihan_id'])
                                 $nilai_skor += $survey['bobot'];
- 
+
                         }
                     }
                     $list_survey[$_index][] = $_survey;
@@ -101,7 +101,7 @@ class SurveyController extends ControllerBase
                         'status_rekomendasi'=> ''
                     ];
                 }
-                
+
                 $aData = [
                     'info'      => $this->mustahik_helper->normalizePengajuanSurvey($info_survey),
                     'survey'    => $list_survey,
@@ -116,7 +116,7 @@ class SurveyController extends ControllerBase
         $this->respNOK(-1, "Data tidak ditemukan");
     }
 
-    public function save() 
+    public function save()
     {
         $id =  $this->request->getPost('pengajuan_id', ['string'], '0');
         $jawaban =  $this->request->getPost('jawaban');
@@ -128,7 +128,7 @@ class SurveyController extends ControllerBase
             $mPengajuanSurvey = new PengajuanSurvey;
             if ($record['status'] == 0 && $record['survey'] == 1)
             {
-                $mSurveyResult = new PengajuanSurveyResult;       
+                $mSurveyResult = new PengajuanSurveyResult;
 
                 $dataSurvey = new stdClass;
                 $dataSurvey->tanggal_survey = date('Y-m-d');
@@ -137,33 +137,51 @@ class SurveyController extends ControllerBase
                 $act = new Activities;
                 $act->setUserId($surveyor);
 
-                $aSurveyAnswer = json_decode($jawaban); 
-                
+                $aSurveyAnswer = json_decode($jawaban);
+
                 if (empty($aSurveyAnswer))
                     $this->respNOK(-1, "Data Survey tidak lengkap");
 
                 if ($info_survey = $mPengajuanSurvey->getByPengajuan($id))
                 {
                     $dataSurvey->id = $info_survey['id'];
+                    $answered = 0;
                     if ($mPengajuanSurvey->updateRecord($dataSurvey))
                     {
                         $pengajuanSurveyId = $dataSurvey->id;
                         foreach ($aSurveyAnswer as $qId  => $aId)
                         {
-                            $mSurveyResult->updateRecordBy(
-                                (object)[
+                            if ($aId != 0) $answered ++;
+
+                            if ($resultSurvey = $mSurveyResult->getByPengajuanSurvey($pengajuanSurveyId, $qId))
+                            {
+                                /* $mSurveyResult->updateRecordBy(
+                                    (object)[
+                                        'option_id'             => $aId
+                                    ],[
+                                        "pengajuan_survey_id='$pengajuanSurveyId'",
+                                        "survey_id='$qId'"]
+                                ); */
+                                $mSurveyResult->updateAnswer( $resultSurvey['id'], $aId);
+                            }
+                            else
+                            {
+                                $mSurveyResult->addRecord((object)[
+                                    'pengajuan_survey_id'   => $pengajuanSurveyId,
+                                    'survey_id'             => $qId,
                                     'option_id'             => $aId
-                                ],[
-                                    "pengajuan_survey_id='$pengajuanSurveyId'",
-                                    "survey_id='$qId'"]
-                            );
+                                ]);
+                            }
                         }
+
+                        $mPengajuanSurvey->setStatus($aSurveyAnswer, $answered == count($aQuestionId) ? 1 : 0);
+
                         $act->log('update verifikasi survey pengajuan','success', '');
                         return $this->respOK();
                     }
 
                 }
-                else 
+                else
                 {
                     $dataSurvey->created = date('Y-m-d H:i:s');
                     $dataSurvey->pengajuan_id = $id;
@@ -171,15 +189,19 @@ class SurveyController extends ControllerBase
                     if ($mPengajuanSurvey->addRecord($dataSurvey))
                     {
                         $pengajuanSurveyId = $mPengajuanSurvey->getInsertId();
-
+                        $answered = 0;
                         foreach ($aSurveyAnswer as $qId  => $aId)
                         {
+                            if ($aId != 0) $answered ++;
+
                             $mSurveyResult->addRecord((object)[
                                 'pengajuan_survey_id'   => $pengajuanSurveyId,
                                 'survey_id'             => $qId,
                                 'option_id'             => $aId
                             ]);
                         }
+
+                        $mPengajuanSurvey->setStatus($aSurveyAnswer, $answered == count($aQuestionId) ? 1 : 0);
                         $act->log('set verifikasi survey pengajuan','success', '');
                         return $this->respOK();
                     }

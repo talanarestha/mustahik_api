@@ -2,7 +2,7 @@
 
 class PengajuanController extends ControllerBase
 {
-    public function index() 
+    public function index()
     {
         $user_id =  $this->request->getPost('tipe',['int'], 0);
         $type = $this->request->getPost('tipe',['int'], 0);
@@ -17,19 +17,24 @@ class PengajuanController extends ControllerBase
         ];
 
         $aCondition = [ 'pengajuan.survey=1' ];
-        if ($type == 2) 
+        if ($type == 2)
         {
-            $aCondition[] = "pengajuan.status=1";
+            $aCondition[] = "pengajuan_survey.status=1";
             $aCondition[] = "pengajuan_survey.surveyor='$user_id'";
         }
-        else if ($type == 1) 
+        else if ($type == 1)
         {
-            $aCondition[] = "pengajuan.status=0";
+            //$aCondition[] = "pengajuan.status=0";
+            $aCondition[] = "pengajuan_survey.status=0";
             $aCondition[] = "pengajuan_survey.surveyor='$user_id'";
         }
-        else $aCondition[] = "pengajuan.status=0";
+        else
+        {
+            $aCondition[] = "pengajuan_survey.id IS NULL";
+        }
+        //else $aCondition[] = "pengajuan.status=0";
 
-        if ($records = $model->getListBy ($aCondition, $start, $offset))        
+        if ($records = $model->getListBy ($aCondition, $start, $offset))
         {
             foreach ($records as $record)
             {
@@ -42,7 +47,7 @@ class PengajuanController extends ControllerBase
         $this->respOK($data);
     }
 
-    public function get() 
+    public function get()
     {
         $id =  $this->request->getPost('pengajuan_id', ['string'], '0');
         $model = new Pengajuan;
@@ -56,7 +61,7 @@ class PengajuanController extends ControllerBase
         $this->respNOK(-1, "Data tidak ditemukan");
     }
 
-    public function search() 
+    public function search()
     {
         $query = $this->request->getPost('query',['string'], "-");
         $start = $this->request->getPost('start',['int'], 0);
@@ -71,7 +76,7 @@ class PengajuanController extends ControllerBase
 
         $aCondition = [ 'pengajuan.survey=1', "pengajuan.pemohon like '%$query%'" ];
 
-        if ($records = $model->getListBy ($aCondition, $start, $offset))        
+        if ($records = $model->getListBy ($aCondition, $start, $offset))
         {
             foreach ($records as $record)
             {
